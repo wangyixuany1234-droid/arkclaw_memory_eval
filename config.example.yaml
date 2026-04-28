@@ -3,9 +3,9 @@
 
 arkclaw:
   # Arkclaw Response API 网关地址
-  base_url: "https://your-arkclaw-gateway-url/v1"
+  base_url: "http://127.0.0.1:18789/v1"
   # Arkclaw API Key（建议使用环境变量 ARKCLAW_API_KEY 配置）
-  api_key: "your-arkclaw-api-key-here"
+  api_key: "c4736c19cd7d1ad1bed18da4554c9046ac5c166434d34a9c"
   # 可选：模型名称，取决于实际网关配置
   model: "openclaw"
   # 单次请求超时时间（秒）
