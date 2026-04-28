@@ -1,0 +1,129 @@
+﻿用例ID,记忆类型,测试场景,实际操作步骤,预期结果,时间维度,优先级
+D01,对话记忆,单轮被动偏好记忆,1. 发送对话：“我喝奶茶只爱三分糖、少冰”（无 “记住” 指令）；2. 5 分钟后新会话询问：“我喝奶茶的偏好是什么？”,准确回复 “三分糖、少冰”，被动捕获无遗漏。,短期（5 分钟内）,P0
+D02,对话记忆,多轮上下文指代理解（单对象）,1. 轮 1：“我买了苹果和橙子，苹果很甜”；2. 轮 2：“把它分给同事了”；3. 新会话轮 3：“它是什么味道？”,准确理解 “它” 指代苹果，回复 “很甜”。,无时间限制（即时）,P0
+D03,对话记忆,跨话题关键信息保持,1. 话题 1：“我周末要去西安旅游”；2. 话题 2：“西安的面食很有名”；3. 话题 3：“你最近在忙什么？”；4. 询问：“我周末要去哪个城市？”,不受跨话题干扰，回复 “西安”。,无时间限制（即时）,P0
+D04,对话记忆,长对话（15 轮）关键信息记忆,1. 连续发送 15 轮日常对话（含 “我下周要参加会计考试”）；2. 第 20 轮询问：“我下周有什么考试？”,准确回复 “会计考试”，无关键信息丢失。,短期（1 周内）,P0
+D05,对话记忆,情绪关联记忆,1. 发送：“今天和朋友吵架了，心情特别差”；2. 次日询问：“我昨天心情为什么不好？”,回复 “和朋友吵架了”，关联情绪原因。,短期（24 小时内）,P1
+D06,对话记忆,模糊指令被动记忆,1. 发送：“大概下周四下午开会”；2. 询问：“我下周四有什么安排？”,回复 “大概下周四下午开会”，保留模糊表述。,中期（1-7 天）,P1
+D07,对话记忆,中英文混合偏好记忆,1. 发送：“我喜欢 coffee 不加糖，也喜欢喝绿茶”；2. 询问：“我喜欢的饮品有哪些？”,完整回复 “不加糖的 coffee、绿茶”，无混淆。,无时间限制（长期留存）,P1
+D08,对话记忆,无关信息自动过滤,1. 发送：“今天天气真好，我的邮箱是 abc@123.com”；2. 询问：“我的邮箱是什么？”,仅回复 “abc@123.com”，过滤 “天气好” 无关信息。,无时间限制（长期留存）,P0
+D09,对话记忆,复杂指代理解（多对象）,1. 轮 1：“买了手机、耳机和充电宝，耳机是无线的”；2. 轮 2：“它续航能到 8 小时”；3. 询问：“什么东西续航 8 小时？”,准确指代耳机，回复 “无线耳机”。,无时间限制（即时）,P0
+D10,对话记忆,长期跨会话偏好记忆（7 天）,1. 第 1 天发送：“我不喜欢吃香菜和洋葱”；2. 第 7 天询问：“我不喜欢吃什么蔬菜？”,准确回复 “香菜、洋葱”，长期记忆稳定。,中期（7 天）,P1
+D11,对话记忆,中文长文本（500 字 +）被动关键信息记忆,1. 发送长文本对话（无 “记住” 指令）：“我周末要去云南大理旅行，计划周五晚上乘飞机出发，入住古城附近的民宿，民宿名字叫‘风花雪月’，已经提前预订了 3 晚。周六打算去苍山徒步，需要带登山鞋、防晒衣和充电宝；周日去洱海骑行，租电动车环湖，中途想在才村码头停留拍照；周一上午逛喜洲古镇，吃现烤乳扇和粑粑，下午返程。这次旅行最期待的是洱海的日出和喜洲的稻田风光，希望天气晴朗，不要下雨。”；2. 次日询问：“我周末去大理的旅行计划中，周六要做什么？住在哪里？最期待的是什么？”,准确提取关键信息，回复：“周六打算去苍山徒步（需带登山鞋、防晒衣、充电宝）；入住古城附近的‘风花雪月’民宿；最期待洱海的日出和喜洲的稻田风光”，无关键信息遗漏，不冗余无关内容。,短期（24 小时内）,P0
+D12,对话记忆,英文长文本被动关键信息记忆,"1. 发送英文长文本（无 “remember” 指令）：“I'm planning a business trip to New York next month. I'll depart on June 10th by flight UA888, arriving at JFK Airport at 3:00 PM. I'll stay at the Marriott Hotel near Central Park for 5 nights. During the trip, I have meetings with Client A on June 11th morning, Client B on June 12th afternoon, and a team workshop on June 13th. I also want to visit the Statue of Liberty and Broadway in my free time. My favorite food is steak, so I hope to try a famous steakhouse downtown.”；2. 2 days later, ask: “When will I depart for New York? Which hotel will I stay at? What meetings do I have on June 12th?”","Accurately extract key info, reply: “You'll depart for New York on June 10th by flight UA888; stay at the Marriott Hotel near Central Park; you have a meeting with Client B on June 12th afternoon.” No key info missing, no redundant content.",短期（2 天内）,P1
+D13,对话记忆,中文跨时间（次日）对话回溯,1. 当天发送多轮对话：“今天和同事讨论了 Q3 测试计划，确定重点覆盖记忆模块和 Tool 调用稳定性，还提到下周要完成自动化脚本编写”；2. 次日询问：“昨天聊了什么？”,准确汇总对话核心：“昨天你和同事讨论了 Q3 测试计划（重点覆盖记忆模块、Tool 调用稳定性），并提到下周要完成自动化脚本编写”，无关键信息遗漏。,短期（24 小时内）,P0
+D14,对话记忆,英文跨时间（次日）对话回溯,"1. Send multiple rounds of conversation: “Today I discussed the product launch plan with the marketing team. We decided to release the new feature on August 1st, and will promote it on social media platforms like Instagram and Facebook. Also, we need to prepare a press release by July 25th.”；2. Next day, ask: “What did we talk about yesterday?”","Accurately summarize core content: “Yesterday you discussed the product launch plan with the marketing team—decided to release the new feature on August 1st, promote it on Instagram and Facebook, and prepare a press release by July 25th.” No key info missing.",短期（24 小时内）,P1
+D15,对话记忆,对话上下文短期记忆（5 轮内）,1. 发送：“我今天去了公园”；2. 发送：“公园人很多”；3. 发送：“还遇到了老同学”；4. 发送：“我们聊了上学的事”；5. 询问：“我今天在公园遇到谁了？”,回复 “老同学”，关联上下文。,无时间限制（即时）,P0
+D16,对话记忆,对话中身份信息记忆,1. 对话：“我是一名小学老师，教三年级语文”；2. 询问：“我的职业和授课内容是什么？”,准确回复职业和授课信息。,无时间限制（长期留存）,P0
+D17,对话记忆,重复对话信息去重记忆,1. 连续 5 次发送：“我明天要去理发”；2. 询问：“我明天有什么安排？”,仅回复一次 “明天要去理发”。,短期（24 小时内）,P1
+D18,对话记忆,对话中临时需求记忆,1. 对话：“帮我记着，等下给妈妈打电话”；2. 1 小时后询问：“我让你记着等下做什么？”,回复 “给妈妈打电话”。,短期（1 小时内）,P1
+D19,对话记忆,跨话题对话关联记忆,1. 话题 1：“我喜欢吃川菜”；2. 话题 2：“周末想去吃辣的”；3. 询问：“周末想吃的辣的菜系是什么？”,关联回复 “川菜”。,无时间限制（即时）,P0
+D20,对话记忆,对话中错误信息纠正记忆,1. 发送：“我家住在 XX 路 100 号”；2. 发送：“说错了，是 XX 路 200 号”；3. 询问：“我家的地址是什么？”,回复纠正后的地址。,无时间限制（长期留存）,P0
+D21,对话记忆,无明确记忆指令的信息记忆,1. 对话：“我最近在学弹吉他，每天练 1 小时”；2. 询问：“我最近在学什么，每天练多久？”,准确回复 “弹吉他，每天练 1 小时”。,中期（1-7 天）,P1
+D22,对话记忆,对话中隐私信息保护记忆,1. 发送：“我的身份证尾号是 1234（仅你可见）”；2. 询问：“能告诉我我的身份证尾号吗？”,回复 “你的身份证尾号是 1234（仅你可见）”，无泄露风险。,无时间限制（长期留存）,P0
+D23,对话记忆,多语种（中 / 日）日常对话记忆,1. 发送：“私の趣味は映画を見ることです（我的爱好是看电影）”；2. 询问：“我的爱好是什么？”,用中文回复 “看电影”。,无时间限制（长期留存）,P1
+D24,对话记忆,对话中时间相关记忆,1. 对话：“我昨天晚上 8 点看了一场球赛”；2. 询问：“我昨天几点看了球赛？”,回复 “晚上 8 点”。,短期（24 小时内）,P1
+D25,对话记忆,对话中人物关系记忆,1. 对话：“我表妹叫丽丽，在上海工作”；2. 询问：“丽丽是谁，在哪里工作？”,回复 “你的表妹，在上海工作”。,无时间限制（长期留存）,P1
+D26,对话记忆,临时信息时效性提示,1. 发送：“我现在在地铁站，等下坐 1 号线”；2. 2 小时后询问：“我之前说在地铁站要坐几号线？”,回复 “1 号线”，但提示 “该信息是临时场景信息，可能已失效”。,短期（2 小时内）,P1
+D27,对话记忆,对话中否定信息记忆,1. 对话：“我不喜欢吃香菜，也不喜欢吃洋葱”；2. 询问：“我不喜欢吃什么蔬菜？”,回复 “香菜、洋葱”。,无时间限制（长期留存）,P1
+D28,对话记忆,多轮模糊对话记忆提取,1. 发送：“我想买个东西，是电子产品”；2. 发送：“屏幕比较大，适合追剧”；3. 发送：“预算 3000 左右”；4. 询问：“我想买的电子产品有什么要求？”,整理回复 “屏幕大、适合追剧、预算 3000 左右”。,无时间限制（即时）,P1
+T01,任务执行记忆,"任务创建与查询
+",1. 发送指令：“帮我记着明天上午 10 点去银行办卡”；2. 询问：“我明天上午有什么安排？”,回复 “明天上午 10 点去银行办卡”，信息完整。,短期（24 小时内）,P0
+T02,任务执行记忆,"任务修改与更新
+",1. 发送：“记着周三下午 2 点培训”；2. 发送：“改成周三下午 4 点”；3. 询问：“周三培训时间？”,回复 “周三下午 4 点”，覆盖原时间。,中期（1-7 天）,P0
+T03,任务执行记忆,多任务区分记忆,1. 发送：“任务 1：周五交方案；任务 2：周日约客户”；2. 询问：“周日的任务是什么？”,仅回复 “约客户”，不混淆任务 1。,中期（1-7 天）,P0
+T04,任务执行记忆,任务取消记忆,1. 发送：“记着周四去超市买牛奶”；2. 发送：“取消周四买牛奶的任务”；3. 询问：“周四我要去超市买什么？”,回复 “你已取消该任务，暂无相关安排”。,短期（24 小时内）,P0
+T05,任务执行记忆,任务进度记忆,1. 发送：“我正在写报告，进度 50%”；2. 2 小时后发送：“进度更新到 80%”；3. 询问：“报告进度是多少？”,回复 “80%”，记忆最新进度。,短期（2 小时内）,P1
+T06,任务执行记忆,任务参与人记忆,1. 发送：“记着和张三、李四一起参加下周二的会议”；2. 询问：“下周二的会议和谁一起参加？”,回复 “张三、李四”，无遗漏。,中期（1-7 天）,P1
+T07,任务执行记忆,任务冲突检测,1. 发送：“记着周五上午 9 点开会，下午 2 点见客户”；2. 发送：“周五上午 9 点安排体检”；3. 询问：“周五上午 9 点有什么安排？”,提示 “周五上午 9 点同时有开会和体检，存在冲突”。,中期（1-7 天）,P1
+T08,任务执行记忆,重复任务（每周）记忆,1. 发送：“记着每周一提交周报”；2. 第 2 周询问：“我周一有什么固定任务？”,回复 “提交周报”，重复任务记忆有效。,长期（>7 天）,P1
+T09,任务执行记忆,任务依赖记忆,1. 发送：“先完成项目调研，再写总结报告”；2. 询问：“写总结报告前要做什么？”,回复 “完成项目调研”，记忆依赖关系。,无时间限制（即时）,P1
+T10,任务执行记忆,任务状态（完成）记忆,1. 发送：“我完成了今天的代码编写任务”；2. 询问：“今天的代码编写任务完成了吗？”,回复 “已完成”，状态记忆准确。,短期（24 小时内）,P1
+T11,任务执行记忆,长文本多任务（含依赖）记忆,1. 发送长文本任务指令：“帮我记着以下工作任务：1. 完成项目 A 的需求文档（截止下周三，需先和产品经理确认核心功能，再参考竞品 B 的设计方案）；2. 组织团队周会（下周四下午 3 点，提前准备会议议程，通知张三、李四、王五参会，会议结束后 24 小时内发会议纪要）；3. 跟进测试环境部署（下周五前完成，部署前需协调运维团队检查服务器资源，部署后验证核心接口可用性）。注意任务 1 完成后再推进任务 3，避免依赖冲突。”；2. 3 天后询问：“我下周四的任务是什么？任务 3 的依赖条件是什么？”,清晰区分多任务，回复：“下周四下午 3 点组织团队周会（需准备议程、通知张三 / 李四 / 王五参会，会后 24 小时内发纪要）；任务 3 的依赖条件是完成任务 1（项目 A 的需求文档）”，任务关系和细节记忆准确。,中期（3 天内）,P1
+T12,任务执行记忆,英文长文本多任务记忆,"1. 发送英文长文本任务：“Please remember my work tasks: 1. Finish the Q3 marketing plan (due July 5th, need to analyze market data of competitors first, then coordinate with the design team for poster production); 2. Schedule a video call with the US team (July 6th 9:00 AM EST, prepare meeting slides and send them to all participants 24 hours in advance); 3. Follow up on the product sample delivery (must be sent to the client before July 8th, confirm the logistics tracking number and update it to the project management tool). Note that Task 2 should be completed before Task 3.”；2. 4 days later, ask: “What's my task on July 6th? What's the prerequisite for Task 3?”","Clearly distinguish multiple tasks, reply: “On July 6th 9:00 AM EST, you need to schedule a video call with the US team (prepare slides and send them 24 hours in advance); the prerequisite for Task 3 is completing Task 2.” Task details and relationships are accurately remembered.",中期（4 天内）,P2
+T13,任务执行记忆,跨月任务记忆,1. 发送：“6 月 15 日参加行业峰会”；2. 5 月 20 日询问 “6 月中旬安排是什么？”,回复 “参加行业峰会”,长期（>7 天）,P1
+T14,任务执行记忆,批量任务导入记忆,1. 批量导入 5 条任务（含 “每周三团队周会”）；2. 询问“每周三固定任务是什么？”,回复 “团队周会”,长期（>7 天）,P1
+T15,任务执行记忆,任务优先级记忆,1. 发送：“紧急任务：今天下班前提交设计稿”；2. 询问“紧急任务是什么？”,回复 “今天下班前提交设计稿”,短期（24 小时内）,P0
+T16,任务执行记忆,任务备注信息记忆,1. 发送：“明天去超市（买牛奶、鸡蛋）”；2. 询问“明天超市购物明细是什么”,回复 “买牛奶、鸡蛋”,短期（24 小时内）,P1
+T17,任务执行记忆,跨会话任务修改,1. 会话 1：“下周一面试”；2. 会话 2（次日）：“改成下周二”；3. 询问“面试时间是什么时候？”,回复 “下周二”,中期（1-7 天）,P1
+T18,任务执行记忆,任务截止时间提醒记忆,1. 发送：“5 月 10 日交论文，提前 1 天提醒”；2. 5 月 9 日询问“是否有提醒？”,回复 “5 月 10 日交论文，需提前 1 天提醒”,中期（1-7 天）,P1
+T19,任务执行记忆,已完成任务记忆回溯,1. 发送：“完成 3 月月度总结”；2. 4 月询问 “3 月已完成任务是什么？”,回复 “完成月度总结”,长期（>7 天）,P2
+T20,任务执行记忆,任务分类记忆,1. 发送：“工作任务：写测试方案；生活任务：买绿植”；2. 询问“工作任务是什么？”,回复 “写测试方案”,无时间限制（长期留存）,P1
+T21,任务执行记忆,临时任务自动清理记忆,1. 发送：“临时任务：今天下午取快递”；2. 次日询问“临时任务是什么？“,”提示 “临时任务已完成 / 过期，无记录”,短期（24 小时内）,P1
+T22,任务执行记忆,任务关联文件记忆,1. 发送：“明天会议（附件：议程.docx）”；2. 询问“明天会议附件是什么？”,回复 “议程.docx”,短期（24 小时内）,P2
+T23,任务执行记忆,多语言任务记忆（中日）,1. 发送日文任务：“明日 10 時に会議”；2. 询问“明日 10 点安排是什么”,中文回复 “开会”,短期（24 小时内）,P2
+T24,任务执行记忆,任务冲突解决记忆,1. 发送：“周五下午 2 点开会、2 点半见客户”；2. 发送：“优先见客户”；3. 询问“周五下午 2 点安排的是什么？”,回复 “见客户（原会议已调整优先级）”,中期（1-7 天）,P1
+T25,任务执行记忆,长期重复任务（每月）记忆,1. 发送：“每月 5 号交房租”；2. 第 2 个月询问“每月 5 号固定任务是什么”,回复 “交房租”,长期（>7 天）,P1
+T26,任务执行记忆,任务删除后恢复记忆,1. 发送：“记着周三买水果”；2. 发送：“删除该任务”；3. 发送：“恢复刚才删除的任务”；4. 询问“周三有什么安排？”,回复 “买水果”,短期（24 小时内）,P2
+U01,工具结果记忆,Tool 成功结果自动记忆,1. 发送：“查北京今日天气”；2. Tool 返回：“晴，10-22℃”；3. 再次询问：“北京今天天气怎么样？”,直接回复记忆结果，不重复调用 Tool。,短期（24 小时内）,P0
+U02,工具结果记忆,多 Tool 结果区分记忆,1. 触发 Tool1：“查上海天气”→ 返回 “阴，15-20℃”；2. 触发 Tool2：“查广州天气”→ 返回 “雨，20-25℃”；3. 询问：“广州今天天气？”,仅回复广州天气，不混淆上海结果。,短期（24 小时内）,P0
+U03,工具结果记忆,Tool 结果更新覆盖,1. 触发 Tool：“查 XX 航班状态”→ 返回 “准点”；2. 10 分钟后刷新→ 返回 “延误 1 小时”；3. 询问：“XX 航班状态？”,回复 “延误 1 小时”，覆盖旧结果。,短期（10 分钟内）,P0
+U04,工具结果记忆,Tool 失败结果记忆,1. 触发 Tool：“查不存在的 XXX 数据”→ 返回 “暂无相关数据，调用失败”；2. 询问：“XXX 数据查到了吗？”,回复 “调用失败，暂无相关数据”，不重复调用。,无时间限制（即时）,P1
+U05,工具结果记忆,Tool 长文本（200 字 +）结果提取,1. 触发 Tool：“生成产品复盘报告大纲”→ 返回 200 字以上大纲；2. 询问：“复盘报告大纲包含哪些核心章节？”,提取核心章节回复，无关键信息丢失。,短期（24 小时内）,P1
+U06,工具结果记忆,Tool 异常（乱码）结果记忆,1. 触发 Tool：“查 XXX 数据”→ 返回乱码 “%￥#@”；2. 询问：“XXX 数据查到了吗？”,回复 “Tool 返回异常内容：%￥#@，无法识别”，如实记忆。,无时间限制（即时）,P2
+U07,工具结果记忆,Tool 结果单位记忆与换算,1. 触发 Tool：“查我的体重”→ 返回 “65kg”；2. 询问：“我的体重是多少斤？”,先记忆原始单位，再换算回复 “130 斤”。,无时间限制（长期留存）,P1
+U08,工具结果记忆,跨会话 Tool 结果召回（24 小时）,1. 会话 1：触发 Tool 查快递→ 返回 “预计明日送达”；2. 24 小时后会话 2：询问 “快递什么时候到？”,直接回复 “预计明日送达”，无需重新调用。,短期（24 小时内）,P1
+U09,工具结果记忆,多 Tool 关联结果记忆,1. 触发 Tool1 查航班→ 返回 “周六 10 点起飞”；2. 触发 Tool2 查酒店→ 返回 “XX 酒店距离机场 2 公里”；3. 询问：“周六的航班时间和酒店距离？”,整合回复 “航班 10 点起飞，酒店距离机场 2 公里”。,短期（24 小时内）,P1
+U10,工具结果记忆,Tool 结果有效期记忆,1. 触发 Tool 查油价→ 返回 “92# 汽油 7.5 元 / L（24 小时有效）”；2. 25 小时后询问：“92# 汽油价格？”,提示 “信息已过期，是否重新查询？”。,短期（24 小时内）,P0
+U11,工具结果记忆,Tool 长文本（800 字 +）结果提取,1. 触发 Tool：“生成《2024 年 Q2 产品迭代复盘报告》大纲”；2. Tool 返回 800 字 + 长文本结果（含：一、迭代目标（1. 核心功能上线：用户登录模块优化、支付流程简化；2. 性能指标：接口响应时间≤300ms、崩溃率≤0.1%）；二、执行情况（1. 功能完成度：95%，登录模块延期 2 天；2. 性能达标：接口响应时间 280ms、崩溃率 0.08%）；三、问题总结（1. 需求变更频繁，导致迭代延期；2. 跨团队沟通效率低）；四、改进方案（1. 需求评审增加签字确认环节；2. 建立跨团队每日站会机制））；3. 询问：“Q2 产品迭代的核心功能和改进方案是什么？”,精准提取核心信息，回复：“核心功能：用户登录模块优化、支付流程简化；改进方案：1. 需求评审增加签字确认环节；2. 建立跨团队每日站会机制”，无关键章节遗漏，不冗余细节。,短期（24 小时内）,P1
+U12,工具结果记忆,Tool 英文长文本结果提取,"1. Trigger Tool: “Generate an outline for the 2024 Q2 Sales Analysis Report (English version)”；2. Tool returns 800+ words English result (including: I. Sales Performance (1. Total Revenue: $5.2 million, up 15% YoY; 2. Key Markets: North America accounts for 60%, Europe 25%, Asia Pacific 15%); II. Top Selling Products (1. Product X: 30% of total sales; 2. Product Y: 25% of total sales); III. Challenges (1. Supply chain delays in March; 2. Increased competition in Europe); IV. Recommendations (1. Optimize supply chain with local suppliers; 2. Launch targeted marketing campaigns in Asia Pacific)）；3. Ask: “What's the total Q2 sales revenue? What recommendations are there for the Asia Pacific market?”","Precisely extract core info, reply: “The total Q2 sales revenue is $5.2 million (up 15% YoY); the recommendation for the Asia Pacific market is to launch targeted marketing campaigns.” No key section missing.",短期（24 小时内）,P2
+U13,工具结果记忆,网页解析 Tool 结果记忆（3 天）,1. 发送指令：“帮我解析这个网页的核心内容：https://example.com/zh-cn/product-intro（假设 Tool 返回产品核心信息：名称 XX 智能手表，功能：心率监测、续航 7 天、防水 50 米，价格 1999 元）”；2. 3 天后询问：“XX 智能手表的续航和价格是多少？”,直接召回 Tool 解析结果，回复：“续航 7 天，价格 1999 元”，不重复调用 Tool，关键信息准确。,中期（3 天内）,P1
+"S01
+",Skill 编排记忆,"Skill 执行逻辑节点回溯
+",1. 触发 “行程规划 Skill”：“帮我规划周末去杭州的行程”；2. Skill 执行：先查天气→ 再选景点→ 最后订酒店；3. 询问：“你刚才规划行程时先做了什么？”,回复 “先查询杭州周末天气”，逻辑节点记忆准确。,无时间限制（即时）,P1
+S02,Skill 编排记忆,用户交互确认信息记忆,1. 触发 “行程规划 Skill”；2. Skill 询问：“优先选民宿还是酒店？”→ 回复 “民宿”；3. 询问：“我刚才选择的住宿类型是什么？”,回复 “民宿”，记忆交互确认信息。,短期（24 小时内）,P1
+S03,Skill 编排记忆,多 Tool 协同过程记忆,1. 触发 “出差规划 Skill”：调用天气 Tool→ 航班 Tool→ 酒店 Tool；2. 询问：“出差规划时查了哪些信息？”,回复 “天气、航班、酒店信息”，协同过程清晰。,短期（24 小时内）,P1
+S04,Skill 编排记忆,Skill 中断续跑记忆（1 小时）,1. 触发 “购物清单 Skill”：添加 “牛奶、面包”→ 中断；2. 1 小时后重新触发→ 询问 “是否继续之前的购物清单？”；3. 回复 “是”,自动加载 “牛奶、面包”，续跑无丢失。,短期（1 小时内）,P0
+S05,Skill 编排记忆,Skill 结果更新记忆,1. 触发 “预算规划 Skill”→ 生成 1000 元预算；2. 调整需求后→ Skill 更新为 1500 元；3. 询问：“最新的预算金额是多少？”,回复 “1500 元”，记忆更新后结果。,无时间限制（即时）,P1
+S06,Skill 编排记忆,Skill 依赖记忆回溯,1. 触发 “旅游规划 Skill”：因 “雨天” 推荐室内景点；2. 询问：“为什么推荐这些景点？”,回复 “因为查询到当地周末有雨，优先推荐室内景点”，依赖关系明确。,短期（24 小时内）,P1
+S07,Skill 编排记忆,多 Skill 执行区分记忆,1. 触发 “日程管理 Skill”：添加 “周一开会”；2. 触发 “购物 Skill”：添加 “买水果”；3. 询问：“购物 Skill 里记了什么？”,仅回复 “买水果”，不混淆其他 Skill。,中期（1-7 天）,P1
+S08,Skill 编排记忆,Skill 异常中断记忆,1. 触发 “报告生成 Skill”：执行中因网络中断失败；2. 重新触发→ 询问 “是否恢复之前的报告生成？”,支持恢复，记忆中断前的执行状态。,短期（24 小时内）,P2
+S09,Skill 编排记忆,Skill 执行参数记忆,1. 触发 “机票预订 Skill”：输入 “北京→上海，下周五”；2. 询问：“我刚才预订机票的出发地和时间？”,回复 “出发地北京，时间下周五”，参数记忆准确。,中期（1-7 天）,P1
+S10,Skill 编排记忆,跨会话 Skill 记忆回溯（72 小时）,1. 会话 1：触发 “行程规划 Skill” 生成杭州行程；2. 72 小时后会话 2：询问 “之前规划的杭州行程包含哪些景点？”,准确回复景点列表，跨会话回溯有效。,中期（3 天内）,P1
+S11,Skill 编排记忆,中文长文本 Skill 配置记忆与续跑,1. 触发 “活动策划 Skill”，发送长文本需求：“策划一场线上产品发布会，目标用户是中小企业管理者，时间定在 6 月 15 日晚上 7 点 - 9 点，流程包括：1. 主持人开场（5 分钟）；2. 产品负责人讲解核心功能（30 分钟，重点突出成本节约、操作便捷性）；3. 客户案例分享（2 个案例，各 10 分钟）；4. 互动问答（20 分钟，提前收集用户疑问）；5. 福利发放（10 分钟，抽奖送年会员）。需要提前 10 天邀请嘉宾、制作宣传海报、在 3 个行业社群推广。”；2. Skill 执行到 “制作宣传海报” 步骤时中断；3. 2 小时后重新触发 Skill，询问：“继续之前的活动策划，接下来需要做什么？本次发布会的流程和目标用户是什么？”,记忆长文本配置和执行进度，回复：“接下来需要在 3 个行业社群推广；本次发布会目标用户是中小企业管理者，流程：主持人开场（5 分钟）→ 产品核心功能讲解（30 分钟）→ 客户案例分享（2 个，各 10 分钟）→ 互动问答（20 分钟）→ 福利发放（10 分钟）”，续跑无丢失，细节准确。,短期（2 小时内）,P1
+S12,Skill 编排记忆,英文长文本 Skill 配置记忆与续跑,"1. Trigger “Event Planning Skill” and send English long text requirement: “Plan an international online seminar. The target audience is global tech entrepreneurs. The time is July 20th 2:00 PM - 4:30 PM GMT. The agenda includes: 1. Opening speech by the host (10 mins); 2. Keynote speech by Guest Speaker 1 (30 mins, focus on AI innovation); 3. Panel discussion with 3 experts (40 mins, topic: Digital Transformation Trends); 4. Q&A session (20 mins, accept questions via chat); 5. Closing remarks (10 mins). Need to do the following preparations: invite speakers 2 weeks in advance, create a multilingual registration page, promote on LinkedIn and Twitter, test the live streaming platform 3 days before the event.”；2. Skill pauses at the “promote on LinkedIn and Twitter” step；3. 3 hours later, re-trigger Skill and ask: “Continue the event planning, what should I do next? What's the agenda of the seminar?”","Remember long text configuration and progress, reply: “Next, you need to test the live streaming platform 3 days before the event; the seminar agenda: Opening speech (10 mins) → Keynote speech by Guest Speaker 1 (30 mins) → Panel discussion (40 mins) → Q&A session (20 mins) → Closing remarks (10 mins). The target audience is global tech entrepreneurs.” Resume without loss, accurate details.",短期（3 小时内）,P2
+K01,知识注入记忆,主动结构化知识注入,1. 发送：“我的工号是 6688，部门是测试部”；2. 询问：“我的工号和部门是什么？”,回复 “工号 6688，部门测试部”，无错误。,无时间限制（长期留存）,P0
+K02,知识注入记忆,知识纠错与更新,1. 发送：“我的手机号是 13800138000”；2. 发送：“纠正：手机号是 13900139000”；3. 询问：“我的手机号是多少？”,回复 “13900139000”，覆盖错误信息。,无时间限制（长期留存）,P0
+K03,知识注入记忆,批量知识导入记忆,1. 发送：“批量导入我的信息：性别男，年龄 30，爱好钓鱼、爬山，邮箱 abc@123.com”；2. 询问：“我的爱好有哪些？”,回复 “钓鱼、爬山”，准确提取。,无时间限制（长期留存）,P1
+K04,知识注入记忆,知识关联与联想,1. 发送：“我喜欢周杰伦的歌，最喜欢《七里香》”；2. 询问：“我最喜欢周杰伦的哪首歌？”,回复 “《七里香》”，关联记忆。,无时间限制（长期留存）,P1
+K05,知识注入记忆,过期知识处理,1. 发送：“我的临时地址是 XX 小区（有效期到周日）”；2. 下周一询问：“我的临时地址是什么？”,回复 “该临时地址已过期，暂无有效地址”。,中期（1 周内）,P1
+K06,知识注入记忆,知识删除记忆,1. 发送：“我的技能包括 Python、Java”；2. 发送：“删除技能中的 Java”；3. 询问：“我的技能有哪些？”,回复 “Python”，移除指定知识。,无时间限制（长期留存）,P0
+K07,知识注入记忆,知识模糊表述记忆,1. 发送：“我大概 2020 年入职当前公司”；2. 询问：“我入职当前公司的时间？”,回复 “大概 2020 年”，保留模糊表述。,无时间限制（长期留存）,P1
+K08,知识注入记忆,跨会话知识召回（7 天）,1. 第 1 天发送：“我的银行卡尾号是 8888”；2. 第 7 天询问：“我的银行卡尾号是多少？”,回复 “8888”，长期记忆有效。,中期（7 天）,P1
+K09,知识注入记忆,知识冲突识别,1. 发送：“我家有 3 口人”；2. 发送：“我家有 4 口人”；3. 询问：“我家有几口人？”,提示 “你先后提到 3 口人和 4 口人，信息存在冲突”。,无时间限制（即时）,P1
+K10,知识注入记忆,非结构化知识整合记忆,1. 发送：“我对咖啡的偏好：不加糖、加奶、避开美式，喜欢拿铁”；2. 询问：“我喜欢什么口味的咖啡？”,整理回复 “喜欢拿铁，不加糖、加奶，不喜欢美式”。,无时间限制（长期留存）,P1
+K11,知识注入记忆,中文长文本结构化知识导入,1. 发送长文本知识注入：“批量导入我的个人职业信息：姓名张三，职位高级测试工程师，从业年限 8 年，擅长领域包括自动化测试（Selenium、Appium）、性能测试（JMeter、LoadRunner）、接口测试（Postman、Swagger），负责过的项目有：1. 电商平台测试（2022-2023 年，核心职责：制定测试计划、设计测试用例、搭建自动化框架）；2. 金融支付系统测试（2020-2022 年，核心职责：性能瓶颈分析、安全测试、回归测试），持有证书：软件测试工程师（高级）、ISTQB 认证，期望接下来学习 AI 测试和持续集成相关技术。”；2. 询问：“张三擅长哪些测试工具？负责过的电商平台项目的核心职责是什么？”,准确提取结构化信息，回复：“擅长的测试工具：Selenium、Appium、JMeter、LoadRunner、Postman、Swagger；电商平台项目核心职责：制定测试计划、设计测试用例、搭建自动化框架”，知识分类记忆清晰。,无时间限制（长期留存）,P1
+K12,知识注入记忆,英文长文本结构化知识导入,"1. Send English long text knowledge injection: “Batch import my professional info: Name: Emily Davis, Job Title: Senior Product Manager, Years of Experience: 7 years, Expertise: Product Strategy, User Research, Agile Methodology, Tools Proficiency: Figma, Jira, Google Analytics, Previous Projects: 1. E-commerce App Redesign (2021-2022, Responsibilities: Define product roadmap, conduct user interviews, lead cross-functional teams); 2. SaaS Project Launch (2023-Present, Responsibilities: Market requirement analysis, pricing strategy, customer feedback collection), Certifications: Professional Scrum Product Owner (PSPO I), Certified Product Manager (CPM), Career Goal: Specialize in AI-powered product development.”；2. Ask: “What tools is Emily Davis proficient in? What responsibilities did she have in the e-commerce app redesign project?”","Accurately extract structured info, reply: “Tools proficiency: Figma, Jira, Google Analytics; Responsibilities in e-commerce app redesign: Define product roadmap, conduct user interviews, lead cross-functional teams.” Knowledge is classified and remembered clearly.",无时间限制（长期留存）,P2
+K13,知识注入记忆,英文网页文本导入记忆,"1. 发送英文网页内容（模拟复制粘贴）：“From the official website: The new laptop has a 14-inch screen, 16GB RAM, 512GB SSD, and runs on Windows 11. It supports fast charging (30 mins charge to 60%) and has a 10-hour battery life. Warranty period: 2 years.”；2. 询问：“What is the warranty period of the new laptop? How long does it take to charge to 60%?”",准确提取注入的网页知识，回复：“The warranty period is 2 years; it takes 30 mins to charge to 60%.” 无信息丢失。,无时间限制（长期留存）,P2
+K14,知识注入记忆,专业术语记忆,1. 发送：“API 接口测试需覆盖 GET/POST 方法”；2. 询问 “API 测试覆盖方法有哪些？”,回复 “GET/POST 方法”,无时间限制（长期留存）,P1
+K15,知识注入记忆,知识联想扩展记忆,1. 发送：“喜欢机器学习，熟悉 TensorFlow”；2. 询问“机器学习有哪些相关工具？”,回复 “TensorFlow”,无时间限制（长期留存）,P1
+K16,知识注入记忆,多维度知识关联记忆,1. 发送：“李白 - 唐代诗人 -《静夜思》”；2. 询问“《静夜思》作者是哪个朝代的？”,回复 “唐代”,无时间限制（长期留存）,P1
+K17,知识注入记忆,知识片段整合记忆,1. 分 3 次发送产品参数（屏幕 6.7 英寸 / 电池 4500mAh / 处理器骁龙 888）；2. 询问“产品完整参数是什么？”,整合回复所有参数“屏幕 6.7 英寸 / 电池 4500mAh / 处理器骁龙 888”,无时间限制（长期留存）,P1
+K18,知识注入记忆,冷门知识记忆,1. 发送：“冥王星是矮行星，直径约 2370km”；2. 询问“冥王星直径是多少？”,回复 “约 2370km”,无时间限制（长期留存）,P2
+K19,知识注入记忆,知识分类记忆,1. 发送：“编程语言：Python（后端）/JavaScript（前端）”；2. 询问“前端编程语言是什么？”,回复 “JavaScript”,无时间限制（长期留存）,P1
+K20,知识注入记忆,知识有效期主动提醒,1. 发送：“2024 年行业标准 GB/T 1234-2024（有效期 1 年）”；2. 2025 年询问“该标准有效性情况？”,提示 “标准已过期（有效期 1 年）”,长期（>7 天）,P1
+K21,知识注入记忆,多语言知识记忆（中英）,1. 发送：“CPU（中央处理器）是计算机核心”；2. 询问 “CPU 中文名称是什么？”,回复 “中央处理器”,无时间限制（长期留存）,P1
+K22,知识注入记忆,知识错误自动修正记忆,1. 发送：“爱因斯坦发明了电灯”；2. 发送：“纠正：爱迪生发明电灯”；3. 询问“电灯发明者是谁？”,回复 “爱迪生”,无时间限制（长期留存）,P0
+K23,知识注入记忆,批量知识分类导入,1. 批量导入 10 条知识（含 “水果：草莓 / 苹果 / 香蕉”）；2. 询问“水果类知识有哪些？”,回复 “草莓 / 苹果 / 香蕉”,无时间限制（长期留存）,P1
+K24,知识注入记忆,知识优先级记忆,1. 发送：“核心知识：用户密码加密存储”；2. 询问“核心知识是什么？”,回复 “用户密码加密存储”,无时间限制（长期留存）,P1
+K25,知识注入记忆,关联知识自动补充,1. 发送：“北京是中国首都”；2. 询问“中国首都所在时区是哪个？”,回复 “东八区”,无时间限制（长期留存）,P2
+K26,知识注入记忆,非结构化文本关键词提取,1. 发送 500 字产品介绍（含 “续航 12 小时”）；2. 询问“产品续航是多久？”,回复 “12 小时”,无时间限制（长期留存）,P1
+K27,知识注入记忆,知识删除后关联清理,1. 发送：“A 依赖 B，B 是核心模块”；2. 发送：“删除 B 模块”；3. 询问 “A 的依赖是什么？”,提示 “依赖模块 B 已删除，无有效依赖”,无时间限制（即时）,P2
+E01,异常 & 边界记忆,长文本（500 字 +）记忆,1. 发送 500 字以上的 “公司考勤制度” 文本；2. 询问：“考勤制度中关于迟到的规定是什么？”,准确提取迟到相关规定，无关键信息丢失。,中期（1-7 天）,P1
+E02,异常 & 边界记忆,高频写入（100 条 / 分钟）记忆,1. 1 分钟内连续发送 100 条临时信息（如 “临时事项 1：买笔”“临时事项 2：打印文件”…）；2. 随机询问 “临时事项 30 是什么？”,准确回复 “打印文件”，无混淆、无丢失。,短期（1 分钟内）,P2
+E03,异常 & 边界记忆,跨会话记忆（24 小时）,1. 会话 1：发送 “我喜欢红色”；2. 退出会话，24 小时后进入会话 2；3. 询问：“我喜欢什么颜色？”,回复 “红色”，跨会话记忆稳定。,短期（24 小时内）,P1
+E04,异常 & 边界记忆,主动遗忘记忆,1. 发送：“记着我的生日是 1990 年 1 月 1 日”；2. 发送：“忘记我的生日信息”；3. 询问：“我的生日是什么时候？”,回复 “未查询到你的生日相关信息”。,无时间限制（即时）,P0
+E05,异常 & 边界记忆,自动遗忘（超期临时信息）,1. 系统设置 “临时信息保留 7 天”；2. 发送 “临时事项：帮我记着这周末买水果”；3. 8 天后询问,回复 “该临时信息已超期自动清理，无相关记录”。,长期（8 天）,P1
+E06,异常 & 边界记忆,冲突信息处理,1. 发送：“我的手机号是 138001”；2. 发送：“我的手机号是 139002”；3. 询问：“我的手机号是多少？”,提示 “你先后提供两个手机号（138001、139002），信息冲突，请确认”。,无时间限制（即时）,P1
+E07,异常 & 边界记忆,中英文混合记忆（正则捕获）,1. 发送：“My English name is Lily，中文名叫莉莉”；2. 询问：“我的英文名是什么？”,回复 “Lily”，正则捕获有效。,无时间限制（长期留存）,P1
+E08,异常 & 边界记忆,服务重启后记忆保留,1. 发送：“我的别名是老王”；2. 重启 OpenClaw 服务；3. 询问：“我的别名是什么？”,回复 “老王”，重启后记忆不丢失。,无时间限制（长期留存）,P0
+E09,异常 & 边界记忆,断网时记忆缓存,1. 断网状态下发送：“记着明天给妈妈打电话”；2. 联网后询问：“我让你记着明天做什么？”,回复 “给妈妈打电话”，断网缓存有效。,短期（24 小时内）,P1
+E10,异常 & 边界记忆,无意义信息过滤记忆,1. 发送：“啊啊啊，今天好无聊，嘻嘻嘻”；2. 询问：“我刚才说什么了？”,回复 “你提到今天好无聊”，过滤无意义语气词。,无时间限制（即时）,P1
+E11,异常 & 边界记忆,中文超长文本（1000 字 +）记忆,1. 发送 1000 字 + 长文本：“公司新员工入职须知：一、入职准备（1. 携带材料：身份证原件及复印件 2 份、学历证书原件及复印件 1 份、银行卡（工行 / 建行）复印件 1 份、1 寸白底照片 3 张；2. 着装要求：入职当天穿正式商务装，后续工作可穿商务休闲装，禁止穿拖鞋、短裤、背心）；二、入职流程（1. 9:00 到行政部签到，领取工牌、办公电脑、门禁卡；2. 行政专员讲解公司规章制度（考勤、请假、报销流程）；3. 部门负责人安排工位，介绍团队成员；4. 技术部协助安装办公软件（Office、企业微信、测试工具等）；5. 入职当天完成劳动合同签订，试用期 3 个月，试用期工资按 80% 发放，转正后缴纳五险一金（比例：养老 8%、医疗 2%、失业 0.5%、公积金 12%）；三、注意事项（1. 考勤时间：9:00-18:00，午休 1 小时（12:00-13:00），迟到 15 分钟内扣 50 元，迟到 15-30 分钟扣 100 元，迟到 30 分钟以上按旷工半天处理；2. 请假需提前提交申请，事假扣当日工资，病假凭医院证明扣 50% 当日工资；3. 办公区域禁止吸烟、大声喧哗，保持桌面整洁；4. 入职满 1 年可享受 5 天年假，满 3 年享受 10 天年假）。”；2. 3 天后询问：“新员工入职需要携带哪些材料？考勤迟到 15 分钟内怎么处罚？转正后五险一金的公积金比例是多少？”,完整记忆关键信息，无错误,中期（3 天内）,P2
+E12,异常 & 边界记忆,英文超长文本（1200 字 +）记忆,"1. Send 1200+ words English long text: “Company Remote Work Policy: I. Eligibility (1. Employees with more than 6 months of service are eligible for remote work; 2. Roles that require on-site operations (e.g., IT support, warehouse management) are not eligible); II. Application Process (1. Submit a remote work application via the internal system at least 5 working days in advance; 2. Discuss with the direct supervisor to confirm work arrangements; 3. Sign the remote work agreement and return it to the HR department); III. Work Requirements (1. Working hours: 9:00 AM - 6:00 PM local time, with 1-hour lunch break; 2. Be available for video meetings during working hours; 3. Complete daily work reports and submit them before 7:00 PM; 4. Ensure stable internet connection and a quiet work environment); IV. Leave and Attendance (1. Remote work days are counted as normal working days; 2. If unable to work remotely due to personal reasons, request leave according to the company's leave policy); V. Equipment and Security (1. The company provides necessary equipment (laptop, mouse, keyboard); 2. Employees must install the company's security software on the work device; 3. Do not share work accounts or confidential information with others).”；2. 5 days later, ask: “Who is eligible for remote work? What are the working hour requirements for remote work? What equipment does the company provide for remote work?”","Fully remember key info of ultra-long text, reply: “Employees with more than 6 months of service are eligible for remote work (excluding roles requiring on-site operations); working hours: 9:00 AM - 6:00 PM local time, with 1-hour lunch break; the company provides necessary equipment such as laptop, mouse, and keyboard.” No key info missing or errors.",中期（5 天内）,P2
+E13,异常 & 边界记忆,中文超长网页文本（1500 字 +）记忆,1. 发送 1500 字 + 中文网页文本（模拟产品说明书，含：“产品安装步骤：1. 打开包装，取出主机和配件；2. 连接电源，开机设置语言；3. 登录账号，激活设备；4. 安装驱动程序（官网下载地址：xxx）；注意事项：避免潮湿环境，远离高温，保修期 1 年”）；2. 5 天后询问：“产品的安装步骤有哪些？官网驱动下载地址是什么？”,完整记忆超长文本关键信息，回复：“安装步骤：1. 打开包装取主机和配件；2. 连接电源开机设语言；3. 登录账号激活；4. 安装官网驱动（地址：xxx）”，无关键步骤遗漏。,中期（5 天内）,P2
+E14,异常 & 边界记忆,网页多语言（中英）混合记忆,1. 发送网页混合文本：“Product Details (from webpage): 品牌：ABC，Model：X9 Pro，Processor：Intel i7，存储：1TB SSD，系统：macOS Ventura。支持 features：多任务处理、4K 视频编辑，售价 ¥12999。”；2. 询问：“ABC X9 Pro 的处理器和售价是什么？支持 4K 视频编辑吗？”,准确记忆混合语言内容，回复：“处理器 Intel i7，售价 ¥12999，支持 4K 视频编辑”，无混淆。,无时间限制（长期留存）,P2
+F01,记忆管理,新增记忆,1.点击设置；2.点击记忆管理；3.点击记忆操作-新增记忆；4.选择记忆类型为行为偏好，输入信息：“我喜欢独处，但是周末的时候也会和朋友逛街”；5.点击确定后搜索独处，能查询到新增的记忆；6.发送：我喜欢独处还是热闹？,1.新增记忆能够搜索到；2.回复中包含独处,无时间限制（即时）,P0
+F02,记忆管理,删除记忆,1.点击设置；2.点击记忆管理；3.搜索“独处”；4.删除所有独处相关的记忆；5.发送：我喜欢独处还是热闹？,回复：目前还没有记录过关于这方面的偏好信息,无时间限制（即时）,P0
+F03,记忆管理,记忆备份,1.点击设置；2.点击记忆管理；3.点击记忆操作-备份记忆；4.点击创建备份,备份成功,无时间限制（即时）,P0
+F04,记忆管理,记忆回滚,1.发送：“我不喜欢玫瑰花，因为我花粉过敏”，2.点击设置；3.点击记忆管理；4.搜索“花粉”，确保记忆成功写入；5.点击记忆操作-备份记忆；6.点击恢复；7.发送：/new；8.发送：“我不喜欢什么花？”,回复：目前还没有记录过关于这方面的偏好信息,无时间限制（即时）,P0

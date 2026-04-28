@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Arkclaw 记忆评估报表</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <style>
+      body {
+        font-family: 'Noto Sans SC', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      }
+      .card-shadow {
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+      }
+      .scrollbar-thin::-webkit-scrollbar {
+        height: 6px;
+        width: 6px;
+      }
+      .scrollbar-thin::-webkit-scrollbar-thumb {
+        background-color: rgba(148, 163, 184, 0.8);
+        border-radius: 999px;
+      }
+    </style>
+  </head>
+  <body class="bg-slate-50 text-slate-900">
+    <div class="min-h-screen flex flex-col">
+      <header class="bg-white/80 backdrop-blur border-b border-slate-200 sticky top-0 z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+          <div>
+            <h1 class="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900">
+              Arkclaw 记忆能力自动化评估报表
+            </h1>
+            <p class="text-sm text-slate-500 mt-1">
+              基于 Lance Memory 测试用例集的 ingest → qa → judge 全流程评估结果可视化
+            </p>
+          </div>
+          <div class="hidden sm:flex items-center gap-3 text-xs text-slate-500">
+            <span id="iterationTagBadge" class="px-2 py-1 rounded-full bg-slate-100 border border-slate-200">迭代：--</span>
+            <span id="dataStatusBadge" class="px-2 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-700">
+              数据状态：加载中
+            </span>
+          </div>
+        </div>
+      </header>
+
+      <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        <!-- 错误提示 -->
+        <div id="errorBanner" class="hidden rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"></div>
+
+        <!-- 顶部概览卡片 -->
+        <section class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div class="card-shadow rounded-xl bg-white p-4 flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-medium text-slate-500 uppercase tracking-wide">用例总数</span>
+            </div>
+            <div class="flex items-end justify-between">
+              <p id="totalCases" class="text-2xl font-semibold text-slate-900">--</p>
+              <p class="text-xs text-slate-500">当前筛选范围内</p>
+            </div>
+          </div>
+
+          <div class="card-shadow rounded-xl bg-white p-4 flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-medium text-slate-500 uppercase tracking-wide">通过率</span>
+            </div>
+            <div class="flex items-end justify-between">
+              <p id="passRate" class="text-2xl font-semibold text-emerald-600">--</p>
+              <p class="text-xs text-slate-500">基于最终结论（pass / partial / fail）</p>
+            </div>
+          </div>
+
+          <div class="card-shadow rounded-xl bg-white p-4 flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-medium text-slate-500 uppercase tracking-wide">平均 LLM / 规则分</span>
+            </div>
+            <div class="flex items-end justify-between">
+              <p id="avgScores" class="text-2xl font-semibold text-slate-900">-- / --</p>
+              <p class="text-xs text-slate-500">0 - 10 分区间</p>
+            </div>
+          </div>
+
+          <div class="card-shadow rounded-xl bg-white p-4 flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-medium text-slate-500 uppercase tracking-wide">数据 & LLM 状态</span>
+            </div>
+            <div class="space-y-1 text-xs" id="statusList"></div>
+          </div>
+        </section>
+
+        <!-- 筛选器 -->
+        <section class="card-shadow rounded-xl bg-white p-4 sm:p-5">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-sm font-semibold text-slate-900 flex items-center gap-2">
+              <span class="inline-block w-1 h-4 rounded-full bg-sky-500"></span>
+              筛选条件
+            </h2>
+            <button
+              id="resetFiltersBtn"
+              class="text-xs text-sky-600 hover:text-sky-700 hover:underline"
+              type="button"
+            >
+              重置筛选
+            </button>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
+            <div>
+              <label class="block mb-1 text-slate-500">优先级</label>
+              <select
+                id="filterPriority"
+                class="block w-full rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 focus:border-sky-500 focus:ring-sky-500"
+              >
+                <option value="">全部</option>
+              </select>
+            </div>
+            <div>
+              <label class="block mb-1 text-slate-500">记忆类型</label>
+              <select
+                id="filterMemoryType"
+                class="block w-full rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 focus:border-sky-500 focus:ring-sky-500"
+              >
+                <option value="">全部</option>
+              </select>
+            </div>
+            <div>
+              <label class="block mb-1 text-slate-500">时间维度</label>
+              <select
+                id="filterTimeDimension"
+                class="block w-full rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 focus:border-sky-500 focus:ring-sky-500"
+              >
+                <option value="">全部</option>
+              </select>
+            </div>
+            <div>
+              <label class="block mb-1 text-slate-500">迭代标签</label>
+              <select
+                id="filterIterationTag"
+                class="block w-full rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 focus:border-sky-500 focus:ring-sky-500"
+              >
+                <option value="">全部</option>
+              </select>
+            </div>
+            <div>
+              <label class="block mb-1 text-slate-500">LLM Judge</label>
+              <select
+                id="filterLLMJudge"
+                class="block w-full rounded-lg border border-slate-200 bg-slate-50 px-2 py-1.5 focus:border-sky-500 focus:ring-sky-500"
+              >
+                <option value="">全部</option>
+                <option value="enabled">已启用</option>
+                <option value="disabled">未启用</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <!-- 图表 -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div class="card-shadow rounded-xl bg-white p-4 sm:p-5 flex flex-col">
+            <h2 class="text-sm font-semibold text-slate-900 mb-3">按记忆类型的通过率</h2>
+            <div id="chartByMemoryType" class="h-64"></div>
+          </div>
+          <div class="card-shadow rounded-xl bg-white p-4 sm:p-5 flex flex-col">
+            <h2 class="text-sm font-semibold text-slate-900 mb-3">按优先级的通过率</h2>
+            <div id="chartByPriority" class="h-64"></div>
+          </div>
+          <div class="card-shadow rounded-xl bg-white p-4 sm:p-5 flex flex-col">
+            <h2 class="text-sm font-semibold text-slate-900 mb-3">耗时分布（ms）</h2>
+            <div id="chartDuration" class="h-64"></div>
+          </div>
+        </section>
+
+        <!-- 各阶段平均 Tokens 消耗 -->
+        <section class="card-shadow rounded-xl bg-white p-4 sm:p-5 flex flex-col">
+          <h2 class="text-sm font-semibold text-slate-900 mb-3">各阶段平均 Tokens 消耗</h2>
+          <div id="chartTokens" class="h-64"></div>
+        </section>
+
+        <!-- 失败归因分布 -->
+        <section class="card-shadow rounded-xl bg-white p-4 sm:p-5">
+          <h2 class="text-sm font-semibold text-slate-900 mb-3">失败归因分布</h2>
+          <div id="chartFailureReasons" class="h-64"></div>
+        </section>
+
+        <!-- 明细表 -->
+        <section class="card-shadow rounded-xl bg-white p-4 sm:p-5">
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-sm font-semibold text-slate-900">用例明细</h2>
+            <p class="text-xs text-slate-500" id="tableSummary">-- 条记录</p>
+          </div>
+          <div class="overflow-x-auto scrollbar-thin">
+            <table class="min-w-full text-xs">
+              <thead class="bg-slate-50">
+                <tr>
+                  <th class="px-3 py-2 text-left font-medium text-slate-500">用例ID</th>
+                  <th class="px-3 py-2 text-left font-medium text-slate-500">场景</th>
+                  <th class="px-3 py-2 text-left font-medium text-slate-500">记忆类型</th>
+                  <th class="px-3 py-2 text-left font-medium text-slate-500">时间维度</th>
+                  <th class="px-3 py-2 text-left font-medium text-slate-500">优先级</th>
+                  <th class="px-3 py-2 text-left font-medium text-slate-500">最终结论</th>
+                  <th class="px-3 py-2 text-left font-medium text-slate-500">LLM 分</th>
+                  <th class="px-3 py-2 text-left font-medium text-slate-500">规则分</th>
+                  <th class="px-3 py-2 text-left font-medium text-slate-500">耗时(ms)</th>
+                  <th class="px-3 py-2 text-left font-medium text-slate-500">LLM Judge</th>
+                  <th class="px-3 py-2 text-left font-medium text-slate-500">详情</th>
+                </tr>
+              </thead>
+              <tbody id="casesTableBody" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+
+      <footer class="border-t border-slate-200 bg-white/80 mt-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 text-[11px] text-slate-400 flex justify-between">
+          <span>Arkclaw Memory Evaluation Dashboard</span>
+          <span>由自动化评估流水线结果驱动 · 支持多迭代对比与可观测性分析</span>
+        </div>
+      </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-json.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
+
