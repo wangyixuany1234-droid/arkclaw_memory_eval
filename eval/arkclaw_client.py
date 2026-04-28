@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import time
+import uuid
 from typing import Any, Dict, List, Optional
 
 import requests
@@ -17,12 +18,14 @@ class ArkclawClient:
     - 不假设具体业务逻辑，仅假设接口符合 Arkclaw Response API（/v1/responses）协议。
     - 不硬编码 base_url / api_key，由 ArkclawConfig 提供（最终来自环境变量或 YAML）。
     - 当未配置 base_url 或 api_key 时，不进行真实调用，仅返回 enabled=False 的占位结果，
-      以便在本地 / 无网关环境下仍然可以跑通评估流水线和报表。
+    - 以便在本地 / 无网关环境下仍然可以跑通评估流水线和报表。
+    - 支持 mock 模式：即使无真实网关也能生成模拟响应，用于演示报表功能。
     """
 
-    def __init__(self, cfg: ArkclawConfig) -> None:
+    def __init__(self, cfg: ArkclawConfig, mock_mode: bool = False) -> None:
         self._cfg = cfg
-        self.enabled: bool = bool(cfg.base_url and cfg.api_key)
+        self.mock_mode = mock_mode
+        self.enabled: bool = bool(mock_mode or (cfg.base_url and cfg.api_key))
 
     def call(
         self,
@@ -64,6 +67,62 @@ class ArkclawClient:
                     session_key=session_key,
                 ),
                 error_message="Arkclaw base_url / api_key 未配置，跳过真实调用。",
+            )
+
+        if self.mock_mode:
+            # 模拟模式：生成模拟响应，用于演示报表功能
+            import random
+            import time
+
+            start_ms = int(time.time() * 1000)
+            time.sleep(random.uniform(0.05, 0.2))  # 模拟网络延迟
+
+            # 根据用户输入生成模拟回复
+            mock_response = self._generate_mock_response(user_content)
+
+            duration_ms = int(time.time() * 1000) - start_ms
+
+            mock_token_usage = TokenUsage(
+                input_tokens=len(user_content),
+                output_tokens=len(mock_response),
+                total_tokens=len(user_content) + len(mock_response),
+            )
+
+            events = [
+                DialogueEvent(
+                    type="request",
+                    timestamp_ms=start_ms,
+                    data={"input_preview": user_content[:100], "mock": True},
+                ),
+                DialogueEvent(
+                    type="response_final",
+                    timestamp_ms=start_ms + duration_ms,
+                    data={"content_preview": mock_response[:100], "mock": True},
+                ),
+            ]
+
+            return ArkclawCallResult(
+                enabled=True,
+                skipped_reason=None,
+                success=True,
+                timeout=False,
+                aborted=False,
+                user_content=user_content,
+                assistant_content=mock_response,
+                session_key=session_key,
+                run_id=f"mock-run-{uuid.uuid4().hex[:8]}",
+                duration_ms=duration_ms,
+                token_usage=mock_token_usage,
+                raw_events=events,
+                events_summary=RawEventsSummary(
+                    streaming_delta_count=0,
+                    final_message=mock_response,
+                    aborted=False,
+                    error=None,
+                    run_id=f"mock-run-{uuid.uuid4().hex[:8]}",
+                    session_key=session_key,
+                ),
+                error_message=None,
             )
 
         # 按 /v1/responses 协议构造 URL，默认假定 base_url 已包含 /v1
@@ -222,3 +281,44 @@ class ArkclawClient:
             events_summary=events_summary,
             error_message=error_message,
         )
+
+    def _generate_mock_response(self, user_content: str) -> str:
+        """根据用户输入生成模拟响应"""
+        import random
+
+        # 简单的关键词匹配来生成模拟回复
+        content_lower = user_content.lower()
+
+        if "记住" in user_content or "记得" in user_content:
+            return "好的，我已经记住了这些信息。"
+        elif "偏好" in user_content or "喜欢" in user_content:
+            if "奶茶" in user_content or "三分糖" in user_content:
+                return "我记得你喝奶茶只爱三分糖、少冰。"
+            elif "香菜" in user_content:
+                return "我记得你不喜欢吃香菜。"
+            else:
+                return f"我记住了你的偏好信息。"
+        elif "任务" in user_content or "帮我" in user_content:
+            if "银行" in user_content or "办卡" in user_content:
+                return "我记得你明天上午10点要去银行办卡。"
+            else:
+                return f"好的，我会帮你记住这个任务。"
+        elif "工号" in user_content or "部门" in user_content:
+            if "6688" in user_content and "测试" in user_content:
+                return "你的工号是6688，部门是测试部。"
+            else:
+                return "我记住了你的信息。"
+        elif "天气" in user_content:
+            return "今天天气不错，阳光明媚。"
+        elif "你好" in user_content or "hi" in content_lower:
+            return "你好！有什么我可以帮助你的吗？"
+        else:
+            # 随机返回一些通用回复
+            generic_responses = [
+                "好的，我理解了。",
+                "这是一个有趣的问题。",
+                "让我想想...",
+                "我已经记录了这些信息。",
+                "没问题，我会记住的。",
+            ]
+            return random.choice(generic_responses)

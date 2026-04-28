@@ -50,6 +50,7 @@ def run_pipeline(
     new_session_mode: str,  # ingest | qa | none
     iteration_tag: str,
     output_dir: str,
+    mock_mode: bool = False,
 ) -> Tuple[str, str]:
     """执行 ingest → qa → judge 全流程，并产出结果文件。
 
@@ -71,8 +72,8 @@ def run_pipeline(
 
     cases = [c for c in cases_raw if _match_filters(c)]
 
-    ark_client = ArkclawClient(cfg.arkclaw)
-    llm_judge_client = LLMJudgeClient(cfg.doubao)
+    ark_client = ArkclawClient(cfg.arkclaw, mock_mode=mock_mode)
+    llm_judge_client = LLMJudgeClient(cfg.doubao, mock_mode=mock_mode)
 
     results_jsonl_path = os.path.join(output_dir, "results.jsonl")
     summary_csv_path = os.path.join(output_dir, "summary.csv")

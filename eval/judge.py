@@ -16,11 +16,13 @@ class LLMJudgeClient:
 
     默认兼容 OPENAI 风格 /chat/completions 接口，由 DoubaoConfig 提供 base_url / api_key。
     若未配置，将返回 enabled=False 的结果，由上层降级为仅规则评估。
+    支持 mock 模式：模拟 LLM 评估结果。
     """
 
-    def __init__(self, cfg: DoubaoConfig) -> None:
+    def __init__(self, cfg: DoubaoConfig, mock_mode: bool = False) -> None:
         self._cfg = cfg
-        self.enabled: bool = bool(cfg.base_url and cfg.api_key)
+        self.mock_mode = mock_mode
+        self.enabled: bool = bool(mock_mode or (cfg.base_url and cfg.api_key))
 
     def _build_payload(self, messages: List[Dict[str, str]]) -> Dict[str, Any]:
         return {
@@ -49,6 +51,52 @@ class LLMJudgeClient:
                 output_summary=None,
                 raw=None,
                 error="llm_judge_disabled",
+            )
+
+        if self.mock_mode:
+            # 模拟模式：生成模拟的 LLM 评估结果
+            import random
+            import time
+
+            time.sleep(random.uniform(0.02, 0.08))
+
+            # 简单的模拟评估逻辑
+            answer_str = answer or ""
+            expected_str = expected
+
+            # 检查答案是否包含关键信息
+            has_key_info = any(keyword in answer_str for keyword in ["记得", "记住", "知道", "你好", "好的"])
+            is_empty = len(answer_str.strip()) == 0
+
+            if is_empty:
+                score = 0.0
+                label = "fail"
+                reasoning = "回复为空，没有任何内容。"
+                hit_facts = []
+                missed_facts = ["期望的回答内容"]
+            elif has_key_info:
+                score = random.uniform(8.0, 10.0)
+                label = "pass"
+                reasoning = "回答基本正确，包含了关键信息。"
+                hit_facts = ["基本理解了问题", "给出了相关回答"]
+                missed_facts = []
+            else:
+                score = random.uniform(4.0, 7.5)
+                label = "partial"
+                reasoning = "回答部分相关，但不够完整。"
+                hit_facts = ["理解了部分内容"]
+                missed_facts = ["缺少一些关键信息"]
+
+            return LLMJudgeResult(
+                enabled=True,
+                score=score,
+                label=label,
+                reasoning=reasoning,
+                hit_facts=hit_facts,
+                missed_facts=missed_facts,
+                output_summary="模拟评估完成",
+                raw={"mock": True, "score": score, "label": label},
+                error=None,
             )
 
         sys_prompt = (
