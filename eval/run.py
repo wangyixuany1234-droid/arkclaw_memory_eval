@@ -17,14 +17,14 @@ def _parse_multi(value: str) -> Set[str]:
     return {v.strip() for v in value.split(",") if v.strip()}
 
 
-def _get_free_port() -> int:
+def _get_free_port(host: str = "0.0.0.0") -> int:
     """获取一个可用的端口号"""
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind(("127.0.0.1", 0))
+        s.bind((host, 0))
         return s.getsockname()[1]
 
 
-def _start_http_server(directory: str, port: int) -> HTTPServer:
+def _start_http_server(directory: str, host: str, port: int) -> HTTPServer:
     """在指定目录启动 HTTP 服务器"""
     class Handler(SimpleHTTPRequestHandler):
         def __init__(self, *args, **kwargs):
@@ -34,7 +34,7 @@ def _start_http_server(directory: str, port: int) -> HTTPServer:
             """重写日志方法，减少输出"""
             pass
     
-    server = HTTPServer(("127.0.0.1", port), Handler)
+    server = HTTPServer((host, port), Handler)
     return server
 
 
@@ -91,10 +91,21 @@ def main() -> None:
         help="评估完成后启动 HTTP 服务器并打开浏览器查看报表",
     )
     parser.add_argument(
+        "--host",
+        type=str,
+        default="0.0.0.0",
+        help="HTTP 服务器监听地址，默认 0.0.0.0（所有网络接口），本地可用 127.0.0.1",
+    )
+    parser.add_argument(
         "--port",
         type=int,
         default=None,
         help="HTTP 服务器端口，默认自动选择可用端口",
+    )
+    parser.add_argument(
+        "--no-open-browser",
+        action="store_true",
+        help="不自动打开浏览器（适合远程/网页终端环境）",
     )
 
     args = parser.parse_args()
@@ -145,21 +156,37 @@ def main() -> None:
     # 启动 HTTP 服务器并打开浏览器（如果指定了 --serve）
     if args.serve:
         if os.path.isdir(report_dir):
-            port = args.port if args.port else _get_free_port()
-            server = _start_http_server(report_dir, port)
-            url = f"http://127.0.0.1:{port}/index.html"
+            port = args.port if args.port else _get_free_port(args.host)
+            server = _start_http_server(report_dir, args.host, port)
+            
+            # 构建访问 URL
+            display_host = "127.0.0.1" if args.host == "0.0.0.0" else args.host
+            url = f"http://{display_host}:{port}/index.html"
             
             print("\n" + "=" * 60)
             print(f"🚀 报表服务器已启动：")
+            print(f"   监听地址：{args.host}:{port}")
             print(f"   访问地址：{url}")
-            print(f"   按 Ctrl+C 停止服务器")
+            
+            # 网页终端环境提示
+            if args.host == "0.0.0.0" and not args.no_open_browser:
+                print(f"\n💡 网页终端提示：")
+                print(f"   请在终端界面查找 '端口转发' 或 'Web Preview' 功能")
+                print(f"   或直接在浏览器中访问：{url}")
+            
+            print(f"\n   按 Ctrl+C 停止服务器")
             print("=" * 60 + "\n")
             
-            # 在新线程中打开浏览器，避免阻塞服务器启动
-            def open_browser():
-                webbrowser.open(url)
-            
-            threading.Thread(target=open_browser, daemon=True).start()
+            # 只有在不是 0.0.0.0 且未指定 --no-open-browser 时才尝试打开浏览器
+            if not args.no_open_browser and args.host != "0.0.0.0":
+                # 在新线程中打开浏览器，避免阻塞服务器启动
+                def open_browser():
+                    try:
+                        webbrowser.open(url)
+                    except:
+                        pass  # 忽略浏览器打开失败的情况
+                
+                threading.Thread(target=open_browser, daemon=True).start()
             
             try:
                 server.serve_forever()
